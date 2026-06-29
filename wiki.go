@@ -1,14 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
 )
 
 func main() {
+	//register routes
 	http.HandleFunc("/view/", viewHandler)
+	http.HandleFunc("/edit", editHandler)
+	http.HandleFunc("/save", saveHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
@@ -17,7 +20,24 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Path[len("/view/"):]
 	p, _ := loadPage(title)
 
-	fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
+	renderTemplate(w, "view", p)
+}
+
+func editHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/edit/"):]
+	p, err := loadPage(title)
+
+	if err != nil {
+		p = &Page{Title: title}
+	}
+
+	renderTemplate(w, "edit", p)
+}
+
+func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+	t, _ := template.ParseFiles(tmpl + ".html")
+
+	t.Execute(w, p)
 }
 
 // Page
