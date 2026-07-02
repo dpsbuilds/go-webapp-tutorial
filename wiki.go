@@ -14,8 +14,8 @@ var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 func main() {
 	//register routes
 	http.HandleFunc("/view/", makeHandler(viewHandler))
-	http.HandleFunc("/edit", makeHandler(editHandler))
-	http.HandleFunc("/save", makeHandler(saveHandler))
+	http.HandleFunc("/edit/", makeHandler(editHandler))
+	http.HandleFunc("/save/", makeHandler(saveHandler))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
